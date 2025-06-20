@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://uottawa-project-sharing.github.io/seg3525-assignment3",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
