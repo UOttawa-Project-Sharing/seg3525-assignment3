@@ -12,14 +12,14 @@ const gameSlice = createSlice({
   name: 'game',
   initialState: {
     score: 0,
-    time: '00:00',
+    time: 0,
     difficulty: 'Easy',
   },
   reducers: {
     setScore: (state, action) => { state.score = action.payload; },
     incrementScore: (state) => { state.score += 1; },
     setTime: (state, action) => { state.time = action.payload; },
-    incrementTime: (state, action) => { state.time = action.payload; },
+    incrementTime: (state) => { state.time += 1; },
     setDifficulty: (state, action) => { state.difficulty = action.payload; },
   },
 });
@@ -33,5 +33,12 @@ const store = configureStore({
     game: gameSlice.reducer,
   },
 });
+
+// Utility function to format time in mm:ss
+export function getFormattedTime(seconds) {
+  const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+  const secs = (seconds % 60).toString().padStart(2, '0');
+  return `${mins}:${secs}`;
+}
 
 export default store;
