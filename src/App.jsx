@@ -6,16 +6,19 @@ import Title from "./components/Title.jsx";
 import CustomButton from "./components/CustomButton.jsx";
 import PopupWindow from "./components/PopupWindow.jsx";
 import { useSelector, useDispatch } from 'react-redux'
-import { increment } from './store.js'
+import {increment, incrementScore} from './store.js'
+import TitleBar from "./components/game/TitleBar.jsx";
 
 function App() {
   const count = useSelector(state => state.counter.value)
+  const { score, time, difficulty } = useSelector(state => state.game)
   const dispatch = useDispatch()
   const [show, setShow] = useState(false);
 
   return (
     <>
         <Title size="large">Welcome to Vite + React</Title>
+        <TitleBar score={score} time={time} difficulty={difficulty} />
         <CustomButton onClick={() => dispatch(increment())}>Count {count}</CustomButton>
         <CustomButton onClick={() => setShow(true)}>Popup</CustomButton>
         <PopupWindow
@@ -34,7 +37,7 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => dispatch(increment())} className="btn btn-primary">
+        <button onClick={() => dispatch(incrementScore())} className="btn btn-primary">
           count is {count}
         </button>
         <p>
