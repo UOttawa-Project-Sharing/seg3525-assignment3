@@ -8,6 +8,7 @@ import PopupWindow from "./components/PopupWindow.jsx";
 import { useSelector, useDispatch } from 'react-redux'
 import {getFormattedTime, increment, incrementTime} from './store.js'
 import TitleBar from "./components/game/TitleBar.jsx";
+import GameWindow from "./components/game/GameWindow.jsx";
 
 function App() {
   const count = useSelector(state => state.counter.value)
@@ -22,6 +23,7 @@ function App() {
     <>
         <Title size="large">Welcome to Vite + React</Title>
         <TitleBar score={score} time={formattedTime} difficulty={difficulty} />
+        <GameWindow />
         <CustomButton onClick={() => dispatch(increment())}>Count {count}</CustomButton>
         <CustomButton onClick={() => setShow(true)}>Popup</CustomButton>
         <PopupWindow
