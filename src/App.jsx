@@ -5,15 +5,18 @@ import './App.css'
 import Title from "./components/Title.jsx";
 import CustomButton from "./components/CustomButton.jsx";
 import PopupWindow from "./components/PopupWindow.jsx";
+import { useSelector, useDispatch } from 'react-redux'
+import { increment } from './store.js'
 
 function App() {
-  const [count, setCount] = useState(0)
-const [show, setShow] = useState(false);
+  const count = useSelector(state => state.counter.value)
+  const dispatch = useDispatch()
+  const [show, setShow] = useState(false);
 
   return (
     <>
         <Title size="large">Welcome to Vite + React</Title>
-        <CustomButton onClick={() => setCount(count + 1)}>Count {count}</CustomButton>
+        <CustomButton onClick={() => dispatch(increment())}>Count {count}</CustomButton>
         <CustomButton onClick={() => setShow(true)}>Popup</CustomButton>
         <PopupWindow
             visible={show}
@@ -31,7 +34,7 @@ const [show, setShow] = useState(false);
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+        <button onClick={() => dispatch(increment())} className="btn btn-primary">
           count is {count}
         </button>
         <p>
