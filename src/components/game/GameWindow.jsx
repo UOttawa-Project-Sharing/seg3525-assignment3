@@ -96,12 +96,13 @@ function GameWindow({ difficulty }) {
       <TitleBar score={score} time={getFormattedTime(timer)} difficulty={difficulty} />
       <div className="grid-container">
         {(showReference ? referenceGrid : playerGrid).map((row, rIdx) => (
-          <div className="grid-row" key={rIdx}>
+          <div className="grid-row" key={rIdx} style={{  height: 60 }}
+>
             {row.map((color, cIdx) => (
               <div
                 key={cIdx}
                 className="grid-tile"
-                style={{ background: color, border: '1px solid #ccc', width: 40, height: 40, display: 'inline-block', cursor: showReference ? 'default' : 'pointer' }}
+                style={{ background: color, border: '1px solid #ccc', width: 60, height: 60, display: 'inline-block', cursor: showReference ? 'default' : 'pointer' }}
                 onClick={() => handleTileClick(rIdx, cIdx)}
               />
             ))}
