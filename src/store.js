@@ -14,8 +14,8 @@ const gameSlice = createSlice({
     score: 0,
     time: 0,
     difficulty: 'Easy',
-    totalTime: 0, // Total time spent in the game
-    totalScore: 0, // Total score accumulated in the game
+    totalTime: 0,
+    totalScore: 0,
   },
   reducers: {
     setScore: (state, action) => { state.score = action.payload; },
@@ -31,14 +31,12 @@ const gameSlice = createSlice({
 const leaderboardSlice = createSlice({
   name: 'leaderboard',
   initialState: {
-    entries: [], // { score: number, time: number, difficulty: string, totalTime: number, totalScore: number }
+    entries: [],
   },
   reducers: {
     addEntry: (state, action) => {
       state.entries.push(action.payload);
-      // Sort by score descending, then time ascending
       state.entries.sort((a, b) => b.score - a.score || a.time - b.time);
-      // Keep only top 10
       if (state.entries.length > 10) state.entries.length = 10;
     },
     clearLeaderboard: (state) => {
@@ -53,7 +51,7 @@ const customSettingsSlice = createSlice({
     width: 4,
     height: 4,
     colors: ['#FF0000', '#00FF00', '#0000FF'],
-    displayTime: 3, // Time to display the colors before starting the game
+    displayTime: 3,
   },
   reducers: {
     setCustomSettings: (state, action) => {
@@ -94,7 +92,6 @@ const store = configureStore({
   },
 });
 
-// Utility function to format time in mm:ss
 export function getFormattedTime(seconds) {
   const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
   const secs = (seconds % 60).toString().padStart(2, '0');

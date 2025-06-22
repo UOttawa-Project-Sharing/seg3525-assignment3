@@ -1,32 +1,25 @@
 import React, { useState } from 'react'
 import './App.css'
 import Title from "./components/Title.jsx";
-import { Button, Container, Row, Col, Modal, Form, Card } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
 import PopupWindow from "./components/PopupWindow.jsx";
 import { useSelector, useDispatch } from 'react-redux'
-import {getFormattedTime, increment, incrementTime, clearLeaderboard, setScore, setTime, setTotalScore, setTotalTime} from './store.js'
-import TitleBar from "./components/game/TitleBar.jsx";
+import {clearLeaderboard, setScore, setTime, setTotalScore, setTotalTime} from './store.js'
 import GameWindow from "./components/game/GameWindow.jsx";
 import Leaderboard from './components/Leaderboard.jsx';
 import GridPageBackground from "./components/GridPageBackground.jsx";
 import MainPageButtons from "./components/MainPageButtons";
-// import CustomDifficultyPopup from "./components/CustomDifficultyPopup.jsx";
 import DifficultySettings from "./components/DifficultySettings.jsx";
 
 function App() {
-  const count = useSelector(state => state.counter.value)
   const { score, time, totalTime, totalScore } = useSelector(state => state.game)
   const customSettings = useSelector(state => state.customSettings);
   const dispatch = useDispatch()
-  const [show, setShow] = useState(false);
   const [showGame, setShowGame] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
-  const [showCustomForm, setShowCustomForm] = useState(false);
-  const [showDifficultyPopup, setShowDifficultyPopup] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
 
-  // Difficulty button states for cycling, matching Settings page
   const DIFFICULTY_STATES = [
     { label: "EASY", value: "easy", className: "green", settings: { width: 5, height: 2, colors: ['#c9c9c9'], displayTime: 3 } },
     { label: "MEDIUM", value: "medium", className: "blue", settings: { width: 5, height: 5, colors: ['#c9c9c9'], displayTime: 4 } },
@@ -34,22 +27,15 @@ function App() {
     { label: "EXPERT", value: "expert", className: "red", settings: { width: 7, height: 7, colors: ['#FF0000', '#00FF00', '#0000FF'], displayTime: 6 } },
     { label: "CUSTOM", value: "custom", className: "" },
   ];
-  const [difficultyIdx, setDifficultyIdx] = useState(0); // default EASY
-
-  // Helper to determine if a game is in progress
+  const [difficultyIdx, setDifficultyIdx] = useState(0);
   const hasOngoingGame = (score > 0 || time > 0 || totalTime > 0 || totalScore > 0) && !showGame;
-
-  // New state to control showing the difficulty selection inline
   const [showDifficultyInline, setShowDifficultyInline] = useState(false);
 
-  // Default to easy if no difficulty is preselected
   React.useEffect(() => {
     if (!selectedDifficulty) {
       setSelectedDifficulty(DIFFICULTY_STATES[0].value);
       setDifficultyIdx(0);
     }
-    // Only run on mount
-    // eslint-disable-next-line
   }, []);
 
   const handlePlay = () => {
@@ -63,11 +49,6 @@ function App() {
     }
   };
 
-  const handleCustomStart = () => {
-    setShowGame(true);
-    setShowCustomForm(false);
-  };
-
   const handleBackToMain = () => {
     setShowGame(false);
   };
@@ -77,7 +58,6 @@ function App() {
   };
 
   const handleNewGame = () => {
-    // Reset game state
     dispatch(setScore(0));
     dispatch(setTime(0));
     dispatch(setTotalScore(0));
@@ -91,10 +71,7 @@ function App() {
       <Card style={{ background: '#23272b', color: 'white', boxShadow: '0 2px 16px #0008', minWidth: '50vw' }}>
         <Card.Body className="d-flex flex-column align-items-center">
           <Title size="large">Tile Matcher</Title>
-          {/*<Title size="large">Tile Matcher</Title>*/}
-
-      {/* Only show MainPageButtons if not showing difficulty or custom forms and not in game */}
-      {!showGame && !showDifficultyInline && !showCustomForm && (
+      {!showGame && !showDifficultyInline && (
         <MainPageButtons
           hasOngoingGame={hasOngoingGame}
           onContinue={handleContinue}
@@ -104,7 +81,6 @@ function App() {
           onLeaderboard={() => setShowLeaderboard(true)}
         />
       )}
-      {/* Inline difficulty selection UI replaces MainPageButtons when showDifficultyInline is true */}
       {!showGame && showDifficultyInline && (
         <DifficultySettings
           difficultyIdx={difficultyIdx}
@@ -112,7 +88,6 @@ function App() {
           DIFFICULTY_STATES={DIFFICULTY_STATES}
           selectedDifficulty={selectedDifficulty}
           setSelectedDifficulty={setSelectedDifficulty}
-          handleCustomStart={handleCustomStart}
           handleBack={() => setShowDifficultyInline(false)}
           handleSelectDifficulty={handleSelectDifficulty}
         />
@@ -120,35 +95,12 @@ function App() {
       {showGame && <GameWindow
         difficulty={selectedDifficulty}
         customSettings={selectedDifficulty === 'custom' ? customSettings : undefined}
-        // Pass DIFFICULTY_STATES and selectedDifficulty for non-custom
         difficultyStates={DIFFICULTY_STATES}
-        // Pass the settings for the selected difficulty (if not custom)
         presetSettings={selectedDifficulty !== 'custom' ? (DIFFICULTY_STATES.find(d => d.value === selectedDifficulty)?.settings) : undefined}
         onBackToMain={handleBackToMain}
       />}
         </Card.Body>
       </Card>
-      {/* Remove PopupWindow for difficulty selection */}
-      {/* <PopupWindow
-          visible={showDifficultyPopup}
-          title="Select Difficulty"
-          onClose={() => setShowDifficultyPopup(false)}
-          footer={
-            <Button variant="primary" onClick={handleSelectDifficulty} disabled={!selectedDifficulty}>Continue</Button>
-          }
-      >
-        <div className="difficulty-select" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
-          <span style={{ marginBottom: 8 }}>Difficulty:</span>
-          <button
-              className={`settings-btn ${DIFFICULTY_STATES[difficultyIdx].className}`}
-              style={{ fontSize: '1.2rem', minWidth: 120 }}
-              onClick={handleCycleDifficulty}
-              type="button"
-          >
-            {DIFFICULTY_STATES[difficultyIdx].label}
-          </button>
-        </div>
-      </PopupWindow> */}
       <PopupWindow
           visible={showInfo}
           title="How to Play"

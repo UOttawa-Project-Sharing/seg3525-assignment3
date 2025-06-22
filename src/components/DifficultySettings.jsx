@@ -9,7 +9,6 @@ const DifficultySettings = ({
   DIFFICULTY_STATES,
   selectedDifficulty,
   setSelectedDifficulty,
-  handleCustomStart,
   handleBack,
   handleSelectDifficulty,
 }) => {
@@ -21,7 +20,6 @@ const DifficultySettings = ({
     if (name === 'width') dispatch(setWidth(Number(value)));
     else if (name === 'height') dispatch(setHeight(Number(value)));
     else if (name === 'displayTime') dispatch(setDisplayTime(Number(value)));
-    // Add more fields as needed
   };
 
   const handleColorChange = (idx, color) => {
@@ -46,7 +44,6 @@ const DifficultySettings = ({
     setSelectedDifficulty(DIFFICULTY_STATES[nextIdx].value);
   };
 
-  // Get the settings to display: custom or from the selected difficulty preset
   const currentSettings = selectedDifficulty === 'custom'
     ? customSettings
     : DIFFICULTY_STATES.find(d => d.value === selectedDifficulty)?.settings || {};
@@ -91,13 +88,7 @@ const DifficultySettings = ({
           </div>
         </div>
         <div className="d-flex gap-3 mt-3 w-100 justify-content-end">
-          <Button variant="primary" style={{ minWidth: 110 }} onClick={() => {
-              // if (selectedDifficulty === 'custom') {
-              //   handleCustomStart();
-              // } else {
-                handleSelectDifficulty();
-              // }
-          }}>Start Game</Button>
+          <Button variant="primary" style={{ minWidth: 110 }} onClick={handleSelectDifficulty}>Start Game</Button>
           <Button variant="secondary" style={{ minWidth: 80 }} onClick={handleBack}>Back</Button>
         </div>
     </div>
