@@ -19,44 +19,19 @@ function App() {
   const [selectedDifficulty, setSelectedDifficulty] = useState('');
   const [showInfo, setShowInfo] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
-
-  const DIFFICULTY_STATES = [
-    { label: "EASY", value: "easy", className: "green", settings: { width: 5, height: 2, colors: ['#c9c9c9'], displayTime: 3 } },
-    { label: "MEDIUM", value: "medium", className: "blue", settings: { width: 5, height: 5, colors: ['#c9c9c9'], displayTime: 4 } },
-    { label: "HARD", value: "hard", className: "red", settings: { width: 6, height: 6, colors: ['#FF0000', '#00FF00', '#0000FF'], displayTime: 5 } },
-    { label: "EXPERT", value: "expert", className: "red", settings: { width: 7, height: 7, colors: ['#FF0000', '#00FF00', '#0000FF'], displayTime: 6 } },
-    { label: "CUSTOM", value: "custom", className: "" },
-  ];
   const [difficultyIdx, setDifficultyIdx] = useState(0);
   const hasOngoingGame = (score > 0 || time > 0 || totalTime > 0 || totalScore > 0) && !showGame;
   const [showDifficultyInline, setShowDifficultyInline] = useState(false);
 
-  React.useEffect(() => {
-    if (!selectedDifficulty) {
-      setSelectedDifficulty(DIFFICULTY_STATES[0].value);
-      setDifficultyIdx(0);
-    }
-  }, []);
-
-  const handlePlay = () => {
-    setShowDifficultyInline(true);
-  };
-
+  const handlePlay = () => setShowDifficultyInline(true);
   const handleSelectDifficulty = () => {
     if (selectedDifficulty) {
       setShowGame(true);
       setShowDifficultyInline(false);
     }
   };
-
-  const handleBackToMain = () => {
-    setShowGame(false);
-  };
-
-  const handleContinue = () => {
-    setShowGame(true);
-  };
-
+  const handleBackToMain = () => setShowGame(false);
+  const handleContinue = () => setShowGame(true);
   const handleNewGame = () => {
     dispatch(setScore(0));
     dispatch(setTime(0));
@@ -85,7 +60,6 @@ function App() {
         <DifficultySettings
           difficultyIdx={difficultyIdx}
           setDifficultyIdx={setDifficultyIdx}
-          DIFFICULTY_STATES={DIFFICULTY_STATES}
           selectedDifficulty={selectedDifficulty}
           setSelectedDifficulty={setSelectedDifficulty}
           handleBack={() => setShowDifficultyInline(false)}
@@ -95,8 +69,6 @@ function App() {
       {showGame && <GameWindow
         difficulty={selectedDifficulty}
         customSettings={selectedDifficulty === 'custom' ? customSettings : undefined}
-        difficultyStates={DIFFICULTY_STATES}
-        presetSettings={selectedDifficulty !== 'custom' ? (DIFFICULTY_STATES.find(d => d.value === selectedDifficulty)?.settings) : undefined}
         onBackToMain={handleBackToMain}
       />}
         </Card.Body>
@@ -109,12 +81,15 @@ function App() {
         <div>
           <ul style={{ paddingLeft: 20 }}>
             <li>Click <strong>Play</strong> to start a new game, or <strong>Continue Game</strong> if you have an ongoing game.</li>
-            <li>Select a difficulty or create a custom one.</li>
-            <li>Memorize the pattern shown when the game starts.</li>
-            <li>Recreate the pattern by clicking tiles. In color mode, click to cycle through colors.</li>
-            <li>Use the <strong>Hint</strong> button to briefly show the reference pattern again.</li>
-            <li>Click <strong>Finish</strong> when you think your pattern matches the reference.</li>
-            <li>Use the color picker in custom mode to add up to 10 colors.</li>
+            <li>Select a preset difficulty (Easy, Medium, Hard, Expert) or choose <strong>Custom</strong> to set your own grid size, display time, and up to 10 colors.</li>
+            <li>Before starting, you can choose which colors to use for each mode in the settings window (including grayscale or color modes).</li>
+            <li>When the game starts, memorize the reference pattern shown for a few seconds (display time depends on difficulty).</li>
+            <li>Recreate the pattern by clicking tiles. In color mode, each click cycles through the available colors. In grayscale mode, tiles toggle between gray and white.</li>
+            <li>Use the <strong>Hint</strong> button to briefly show the reference pattern again (pauses the timer).</li>
+            <li>Click <strong>Finish</strong> when you think your pattern matches the reference. Your accuracy and time will be scored.</li>
+            <li>Use the <strong>Pause</strong> button to pause/resume the game at any time.</li>
+            <li>View your best scores and times in the <strong>Leaderboard</strong>. You can clear the leaderboard if desired.</li>
+            <li>In custom mode, use the color picker to add or remove colors (up to 10) and adjust grid size and display time.</li>
           </ul>
           <hr />
           <div style={{ fontSize: '0.95em', color: '#666' }}>

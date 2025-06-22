@@ -1,12 +1,19 @@
 import React from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
-import {setWidth, setHeight, setColors, addColor, removeColor, setDisplayTime} from '../store';
+import { setWidth, setHeight, setColors, addColor, removeColor, setDisplayTime, setPresetColors } from '../store';
+
+const DIFFICULTY_LABELS = [
+  { label: 'EASY', value: 'easy', className: 'green' },
+  { label: 'MEDIUM', value: 'medium', className: 'blue' },
+  { label: 'HARD', value: 'hard', className: 'red' },
+  { label: 'EXPERT', value: 'expert', className: 'red' },
+  { label: 'CUSTOM', value: 'custom', className: '' },
+];
 
 const DifficultySettings = ({
   difficultyIdx,
   setDifficultyIdx,
-  DIFFICULTY_STATES,
   selectedDifficulty,
   setSelectedDifficulty,
   handleBack,
@@ -14,6 +21,14 @@ const DifficultySettings = ({
 }) => {
   const dispatch = useDispatch();
   const customSettings = useSelector(state => state.customSettings);
+  const presetSettings = useSelector(state => state.presetSettings);
+
+  React.useEffect(() => {
+    if (!selectedDifficulty) {
+      setSelectedDifficulty('easy');
+      setDifficultyIdx(0);
+    }
+  }, [selectedDifficulty, setSelectedDifficulty, setDifficultyIdx]);
 
   const handleCustomChange = (e) => {
     const { name, value } = e.target;
@@ -23,9 +38,19 @@ const DifficultySettings = ({
   };
 
   const handleColorChange = (idx, color) => {
-    const newColors = [...customSettings.colors];
-    newColors[idx] = color;
-    dispatch(setColors(newColors));
+    if (selectedDifficulty === 'custom') {
+      const newColors = [...customSettings.colors];
+      newColors[idx] = color;
+      dispatch(setColors(newColors));
+    } else {
+      // Update preset colors in Redux store
+      const preset = presetSettings[selectedDifficulty];
+      if (preset) {
+        const newColors = [...preset.colors];
+        newColors[idx] = color;
+        dispatch(setPresetColors({ difficulty: selectedDifficulty, colors: newColors }));
+      }
+    }
   };
 
   const handleRemoveColorRedux = (idx) => {
@@ -39,14 +64,14 @@ const DifficultySettings = ({
   };
 
   const handleCycleDifficulty = () => {
-    const nextIdx = (difficultyIdx + 1) % DIFFICULTY_STATES.length;
+    const nextIdx = (difficultyIdx + 1) % DIFFICULTY_LABELS.length;
     setDifficultyIdx(nextIdx);
-    setSelectedDifficulty(DIFFICULTY_STATES[nextIdx].value);
+    setSelectedDifficulty(DIFFICULTY_LABELS[nextIdx].value);
   };
 
   const currentSettings = selectedDifficulty === 'custom'
     ? customSettings
-    : DIFFICULTY_STATES.find(d => d.value === selectedDifficulty)?.settings || {};
+    : presetSettings[selectedDifficulty] || {};
 
   return (
     <div className="d-flex flex-column align-items-center gap-4 my-3" style={{ minWidth: '50%' }}>
@@ -58,7 +83,7 @@ const DifficultySettings = ({
                 style={{ fontSize: '1.1rem', minWidth: 120, borderRadius: 4, border: '1px solid #ccc' }}
                 onClick={handleCycleDifficulty}
             >
-                {DIFFICULTY_STATES[difficultyIdx].label}
+                {DIFFICULTY_LABELS[difficultyIdx].label}
             </button>
         </div>
         <div className="w-100 d-flex align-items-center justify-content-between mb-2">
@@ -78,7 +103,7 @@ const DifficultySettings = ({
           <div className="d-flex flex-wrap align-items-center mt-2" style={{ gap: 8 }}>
             {(currentSettings.colors || []).map((color, idx) => (
               <span key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
-                <Form.Control type="color" value={color} onChange={e => handleColorChange(idx, e.target.value)} style={{ width: 32, height: 32, border: 'none', background: 'none', padding: 0 }} disabled={selectedDifficulty !== 'custom'} />
+                <Form.Control type="color" value={color} onChange={e => handleColorChange(idx, e.target.value)} style={{ width: 32, height: 32, border: 'none', background: 'none', padding: 0 }} />
                 {currentSettings.colors.length > 1 && (
                   <Button type="button" variant="outline-danger" size="sm" className="px-2 py-0" style={{ fontSize: 18, lineHeight: 1, marginLeft: 2 }} onClick={() => handleRemoveColorRedux(idx)} disabled={selectedDifficulty !== 'custom'}>&minus;</Button>
                 )}

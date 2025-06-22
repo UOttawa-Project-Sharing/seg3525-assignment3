@@ -13,9 +13,11 @@ function generateGrid(rows, cols, colors) {
   );
 }
 
-function GameWindow({ difficulty, onBackToMain, customSettings, presetSettings }) {
+function GameWindow({ difficulty, onBackToMain }) {
   const dispatch = useDispatch();
   const { time, totalTime, totalScore } = useSelector(state => state.game);
+  const customSettings = useSelector(state => state.customSettings);
+  const presetSettings = useSelector(state => state.presetSettings);
   const [showReference, setShowReference] = useState(true);
   const [timer, setTimer] = useState(0);
   const [running, setRunning] = useState(true);
@@ -39,17 +41,17 @@ function GameWindow({ difficulty, onBackToMain, customSettings, presetSettings }
         colorMode: colors.length > 1,
         showReferenceTime: customSettings.displayTime || 3
       };
-    } else if (presetSettings) {
-      let colors = presetSettings.colors;
+    } else if (presetSettings && presetSettings[difficulty]) {
+      let colors = presetSettings[difficulty].colors;
       if (!colors.includes('white')) {
         colors = [...colors, 'white'];
       }
       return {
-        rows: presetSettings.height,
-        cols: presetSettings.width,
+        rows: presetSettings[difficulty].height,
+        cols: presetSettings[difficulty].width,
         colors: colors,
         colorMode: colors.length > 1,
-        showReferenceTime: presetSettings.displayTime || 3
+        showReferenceTime: presetSettings[difficulty].displayTime || 3
       };
     }
     return { rows: 4, cols: 4, colors: ['#FF0000', '#00FF00', '#0000FF', 'white'], colorMode: true, showReferenceTime: 3 };
@@ -76,21 +78,6 @@ function GameWindow({ difficulty, onBackToMain, customSettings, presetSettings }
       return () => clearInterval(interval);
     }
   }, [showReference, running, dispatch, time]);
-
-  function handleTileClick(row, col) {
-    if (showReference || !running) return;
-    setPlayerGrid(grid => {
-      const newGrid = grid.map(arr => arr.slice());
-      if (colorMode) {
-        const currentColor = newGrid[row][col];
-        const nextColor = colors[(colors.indexOf(currentColor) + 1) % colors.length];
-        newGrid[row][col] = nextColor;
-      } else {
-        newGrid[row][col] = newGrid[row][col] === 'gray' ? 'white' : 'gray';
-      }
-      return newGrid;
-    });
-  }
 
   function handleTileAction(row, col) {
     if (showReference || !running) return;

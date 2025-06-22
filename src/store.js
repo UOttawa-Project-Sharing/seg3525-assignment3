@@ -78,10 +78,35 @@ const customSettingsSlice = createSlice({
   },
 });
 
+const presetSettingsSlice = createSlice({
+  name: 'presetSettings',
+  initialState: {
+    easy: { width: 5, height: 2, colors: ['#c9c9c9'], displayTime: 3 },
+    medium: { width: 5, height: 5, colors: ['#c9c9c9'], displayTime: 4 },
+    hard: { width: 6, height: 6, colors: ['#FF0000', '#00FF00', '#0000FF'], displayTime: 5 },
+    expert: { width: 7, height: 7, colors: ['#FF0000', '#00FF00', '#0000FF'], displayTime: 6 },
+  },
+  reducers: {
+    setPresetColors: (state, action) => {
+      const { difficulty, colors } = action.payload;
+      if (state[difficulty]) {
+        state[difficulty].colors = colors;
+      }
+    },
+    setPresetSetting: (state, action) => {
+      const { difficulty, setting, value } = action.payload;
+      if (state[difficulty]) {
+        state[difficulty][setting] = value;
+      }
+    },
+  },
+});
+
 export const { increment } = counterSlice.actions;
 export const { setScore, incrementScore, setTime, incrementTime, setDifficulty, setTotalTime, setTotalScore } = gameSlice.actions;
 export const { addEntry, clearLeaderboard } = leaderboardSlice.actions;
 export const { setCustomSettings, setWidth, setHeight, setColors, addColor, removeColor, setDisplayTime } = customSettingsSlice.actions;
+export const { setPresetColors, setPresetSetting } = presetSettingsSlice.actions;
 
 const store = configureStore({
   reducer: {
@@ -89,6 +114,7 @@ const store = configureStore({
     game: gameSlice.reducer,
     leaderboard: leaderboardSlice.reducer,
     customSettings: customSettingsSlice.reducer,
+    presetSettings: presetSettingsSlice.reducer,
   },
 });
 
