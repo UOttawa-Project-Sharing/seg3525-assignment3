@@ -24,6 +24,7 @@ function GameWindow({ difficulty, onBackToMain, customSettings, presetSettings }
   const [pause, setPause] = useState(false);
   const [win, setWin] = useState(false);
   const [winScore, setWinScore] = useState(0);
+  const [mouseDown, setMouseDown] = useState(false);
 
   function getGridConfig() {
     if (difficulty === 'custom') {
@@ -77,6 +78,21 @@ function GameWindow({ difficulty, onBackToMain, customSettings, presetSettings }
   }, [showReference, running, dispatch, time]);
 
   function handleTileClick(row, col) {
+    if (showReference || !running) return;
+    setPlayerGrid(grid => {
+      const newGrid = grid.map(arr => arr.slice());
+      if (colorMode) {
+        const currentColor = newGrid[row][col];
+        const nextColor = colors[(colors.indexOf(currentColor) + 1) % colors.length];
+        newGrid[row][col] = nextColor;
+      } else {
+        newGrid[row][col] = newGrid[row][col] === 'gray' ? 'white' : 'gray';
+      }
+      return newGrid;
+    });
+  }
+
+  function handleTileAction(row, col) {
     if (showReference || !running) return;
     setPlayerGrid(grid => {
       const newGrid = grid.map(arr => arr.slice());
@@ -197,19 +213,23 @@ function GameWindow({ difficulty, onBackToMain, customSettings, presetSettings }
         </div>
       )}
       <TitleBar score={totalScore} time={getFormattedTime(timer)} difficulty={difficulty} />
-      <div className="grid-container">
+      <div className="grid-container"
+        onMouseLeave={() => setMouseDown(false)}
+      >
         {(showReference ? referenceGrid : playerGrid).map((row, rIdx) => (
-            <div className="grid-row" key={rIdx} style={{  height: 60 }}
-            >
-              {row.map((color, cIdx) => (
-                  <div
-                      key={cIdx}
-                      className="grid-tile"
-                      style={{ background: color, border: '1px solid #ccc', width: 60, height: 60, display: 'inline-block', cursor: showReference ? 'default' : 'pointer' }}
-                      onClick={() => handleTileClick(rIdx, cIdx)}
-                  />
-              ))}
-            </div>
+          <div className="grid-row" key={rIdx} style={{  height: 60 }}
+          >
+            {row.map((color, cIdx) => (
+              <div
+                key={cIdx}
+                className="grid-tile"
+                style={{ background: color, border: '1px solid #ccc', width: 60, height: 60, display: 'inline-block', cursor: showReference ? 'default' : 'pointer' }}
+                onMouseDown={e => { e.preventDefault(); setMouseDown(true); handleTileAction(rIdx, cIdx); }}
+                onMouseUp={() => setMouseDown(false)}
+                onMouseEnter={() => { if (mouseDown) handleTileAction(rIdx, cIdx); }}
+              />
+            ))}
+          </div>
         ))}
       </div>
       {showReference && <div className="reference-label">Memorize the pattern!</div>}
