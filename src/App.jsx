@@ -4,7 +4,7 @@ import Title from "./components/Title.jsx";
 import { Button, Card } from 'react-bootstrap';
 import PopupWindow from "./components/PopupWindow.jsx";
 import { useSelector, useDispatch } from 'react-redux'
-import {clearLeaderboard, setScore, setTime, setTotalScore, setTotalTime, deleteAllData} from './store.js'
+import {clearLeaderboard, setScore, setTime, setTotalScore, setTotalTime, deleteAllData, setDifficulty} from './store.js'
 import GameWindow from "./components/game/GameWindow.jsx";
 import Leaderboard from './components/Leaderboard.jsx';
 import GridPageBackground from "./components/GridPageBackground.jsx";
@@ -12,21 +12,20 @@ import MainPageButtons from "./components/MainPageButtons";
 import DifficultySettings from "./components/DifficultySettings.jsx";
 
 function App() {
-  const { score, time, totalTime, totalScore } = useSelector(state => state.game)
+  const { score, time, totalTime, totalScore, difficulty } = useSelector(state => state.game)
   const customSettings = useSelector(state => state.customSettings);
   const dispatch = useDispatch()
   const [showGame, setShowGame] = useState(false);
-  const [selectedDifficulty, setSelectedDifficulty] = useState('');
   const [showInfo, setShowInfo] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
-  const [difficultyIdx, setDifficultyIdx] = useState(0);
   const hasOngoingGame = (score > 0 || time > 0 || totalTime > 0 || totalScore > 0) && !showGame;
   const [showDifficultyInline, setShowDifficultyInline] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handlePlay = () => setShowDifficultyInline(true);
-  const handleSelectDifficulty = () => {
+  const handleSelectDifficulty = (selectedDifficulty) => {
     if (selectedDifficulty) {
+      dispatch(setDifficulty(selectedDifficulty));
       setShowGame(true);
       setShowDifficultyInline(false);
     }
@@ -47,8 +46,7 @@ function App() {
     dispatch(deleteAllData());
     setShowGame(false);
     setShowDifficultyInline(false);
-    setSelectedDifficulty('');
-    setDifficultyIdx(0);
+    dispatch(setDifficulty('easy'));
     setShowInfo(false);
     setShowLeaderboard(false);
     setShowDeleteConfirm(false);
@@ -76,17 +74,15 @@ function App() {
       )}
       {!showGame && showDifficultyInline && (
         <DifficultySettings
-          difficultyIdx={difficultyIdx}
-          setDifficultyIdx={setDifficultyIdx}
-          selectedDifficulty={selectedDifficulty}
-          setSelectedDifficulty={setSelectedDifficulty}
+          selectedDifficulty={difficulty}
+          setSelectedDifficulty={d => dispatch(setDifficulty(d))}
           handleBack={() => setShowDifficultyInline(false)}
-          handleSelectDifficulty={handleSelectDifficulty}
+          handleSelectDifficulty={() => handleSelectDifficulty(difficulty)}
         />
       )}
       {showGame && <GameWindow
-        difficulty={selectedDifficulty}
-        customSettings={selectedDifficulty === 'custom' ? customSettings : undefined}
+        difficulty={difficulty}
+        customSettings={difficulty === 'custom' ? customSettings : undefined}
         onBackToMain={handleBackToMain}
       />}
         </Card.Body>
