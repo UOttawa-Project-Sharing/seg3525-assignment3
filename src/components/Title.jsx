@@ -8,5 +8,5 @@ const sizeMap = {
 
 export default function Title({ children, size = 'medium' }) {
     const Tag = sizeMap[size] || 'h2';
-    return <Tag>{children}</Tag>;
+    return <Tag style={{ textShadow: '2px 2px 0 #000, 4px 4px 0 #000' }}>{children}</Tag>;
 }

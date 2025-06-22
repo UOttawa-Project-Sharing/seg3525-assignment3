@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 function TitleBar({ score, time, difficulty }) {
   return (
-    <div className="title-bar d-flex justify-content-between align-items-center p-2 bg-light border-bottom">
+    <div className="title-bar d-flex justify-content-between align-items-center p-2 bg-transparent border-bottom">
       <div className="title-bar-section">
         <strong>Score:</strong> {score}
       </div>
@@ -24,4 +24,3 @@ TitleBar.propTypes = {
 };
 
 export default TitleBar;
-

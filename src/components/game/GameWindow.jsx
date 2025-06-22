@@ -14,17 +14,19 @@ function generateGrid(rows, cols, colors) {
   );
 }
 
-function getGridConfig(difficulty, customSettings) {
-  if (difficulty === 'custom' && customSettings) {
+function getGridConfig(difficulty) {
+  const customSettings = useSelector(state => state.customSettings);
+  if (difficulty === 'custom') {
     // add white to custom colors if not present
-    if (!customSettings.colors.includes('white')) {
-      customSettings.colors.push('white');
+    let colors = customSettings.colors;
+    if (!colors.includes('white')) {
+      colors = [...colors, 'white'];
     }
     return {
       rows: customSettings.height,
       cols: customSettings.width,
-      colors: customSettings.colors,
-      colorMode: customSettings.colors.length > 1,
+      colors: colors,
+      colorMode: colors.length > 1,
       showReferenceTime: customSettings.displayTime || 3
     };
   }
@@ -42,7 +44,7 @@ function getGridConfig(difficulty, customSettings) {
   }
 }
 
-function GameWindow({ difficulty, customSettings, onBackToMain }) {
+function GameWindow({ difficulty, onBackToMain }) {
   const dispatch = useDispatch();
   const { score, time, totalTime, totalScore } = useSelector(state => state.game);
   const [showReference, setShowReference] = useState(true);
@@ -50,9 +52,12 @@ function GameWindow({ difficulty, customSettings, onBackToMain }) {
   const [running, setRunning] = useState(true); // Add running state
   const [hintActive, setHintActive] = useState(false); // Track if hint is active
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [pause, setPause] = useState(false); // Track if pause UI should show
+  const [win, setWin] = useState(false); // Track if the user has won
+  const [winScore, setWinScore] = useState(0); // Store win accuracy
 
   // Get config based on difficulty or custom
-  const { rows, cols, colors, colorMode, showReferenceTime } = getGridConfig(difficulty, customSettings);
+  const { rows, cols, colors, colorMode, showReferenceTime } = getGridConfig(difficulty);
 
   // Generate grids based on difficulty
   const [referenceGrid, setReferenceGrid] = useState(() => generateGrid(rows, cols, colors));
@@ -97,7 +102,8 @@ function GameWindow({ difficulty, customSettings, onBackToMain }) {
 
   // Handle hint button
   function handleHint() {
-    setRunning(false); // Pause the game
+    setPause(false); // Do not show pause UI for hint
+    setRunning(false); // Pause the game logic
     setHintActive(true);
     setShowReference(true);
     setTimeout(() => {
@@ -109,6 +115,7 @@ function GameWindow({ difficulty, customSettings, onBackToMain }) {
 
   // Handle leaderboard button
   function handleShowLeaderboard() {
+    setPause(true); // Show pause UI for leaderboard
     setRunning(false);
     setShowLeaderboard(true);
   }
@@ -116,6 +123,7 @@ function GameWindow({ difficulty, customSettings, onBackToMain }) {
   function handleCloseLeaderboard() {
     setShowLeaderboard(false);
     setRunning(true);
+    setPause(false);
   }
 
   // // Check for win
@@ -161,17 +169,66 @@ function GameWindow({ difficulty, customSettings, onBackToMain }) {
       totalTime: newTotalTime,
       totalScore: entryScore,
     }));
-    alert(`Your accuracy: ${accuracy.toFixed(2)}%`);
-    // Reset game
+    setWin(true); // Show win overlay
+    setWinScore(accuracy);
+    setPause(false);
+    setRunning(false);
+  }
+
+  function handleContinue() {
+    setWin(false);
+    setPause(false);
+    setRunning(true);
+    setShowReference(true);
     setReferenceGrid(generateGrid(rows, cols, colors));
     setPlayerGrid(generateGrid(rows, cols, colorMode ? Array(colors.length).fill('white') : Array(cols).fill('white')));
-    setShowReference(true);
     setTimer(0);
-    setRunning(true);
   }
 
   return (
-    <div className="game-window">
+    <div className="game-window" style={{ position: 'relative' }}>
+      {/* Overlay for pause or win */}
+      {win && (
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0,0,0,0.7)',
+          zIndex: 20,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '2.5rem',
+          fontWeight: 'bold',
+        }}>
+          <div>You Win!</div>
+          <div style={{ fontSize: '1.5rem', margin: '1rem 0' }}>Score: {winScore.toFixed(2)}%</div>
+        </div>
+      )}
+      {pause && !running && !win && (
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0,0,0,0.6)',
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '2.5rem',
+          fontWeight: 'bold',
+          pointerEvents: 'none',
+        }}>
+          Game Paused
+        </div>
+      )}
       <TitleBar score={totalScore} time={getFormattedTime(timer)} difficulty={difficulty} />
       <div className="grid-container">
         {(showReference ? referenceGrid : playerGrid).map((row, rIdx) => (
@@ -190,8 +247,23 @@ function GameWindow({ difficulty, customSettings, onBackToMain }) {
       </div>
       {showReference && <div className="reference-label">Memorize the pattern!</div>}
       {!showReference && <div className="instruction-label">Recreate the pattern!</div>}
-      <ButtonGroup className="mb-2">
-        <Button variant={running ? 'warning' : 'success'} onClick={() => setRunning(r => !r)}>
+      { win ? (
+          <ButtonGroup style={{ zIndex: 20 }}>
+            <Button variant="success" onClick={handleContinue}>Continue</Button>
+            <Button variant="primary" onClick={() => {
+              // Reset game state and return to difficulty selection (main menu new game behavior)
+              dispatch(setScore(0));
+              dispatch(setTime(0));
+              dispatch(setTotalScore(0));
+              dispatch(setTotalTime(0));
+              setWin(false);
+              handleContinue();
+            }}>New Game</Button>
+            <Button variant="secondary" onClick={onBackToMain}>Back to Main Menu</Button>
+          </ButtonGroup>
+      ) : (
+      <ButtonGroup className="mb-2" style={{ position: 'relative', zIndex: 20, display: win ? 'none' : undefined }}>
+        <Button variant={running ? 'warning' : 'success'} onClick={() => { setRunning(r => !r); setPause(p => !p); }}>
           <i className={`bi ${running ? 'bi-pause-fill' : 'bi-play-fill'}`}></i>
         </Button>
         <Button variant="info" onClick={handleHint} disabled={hintActive || showReference}>
@@ -206,7 +278,7 @@ function GameWindow({ difficulty, customSettings, onBackToMain }) {
         <Button variant="primary" onClick={handleFinish} disabled={showReference}>
           Finish
         </Button>
-      </ButtonGroup>
+      </ButtonGroup>)}
       <PopupWindow visible={showLeaderboard} title="Leaderboard" onClose={handleCloseLeaderboard}
                    footer={
                      <>

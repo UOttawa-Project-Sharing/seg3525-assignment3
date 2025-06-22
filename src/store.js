@@ -47,15 +47,50 @@ const leaderboardSlice = createSlice({
   }
 });
 
+const customSettingsSlice = createSlice({
+  name: 'customSettings',
+  initialState: {
+    width: 4,
+    height: 4,
+    colors: ['#FF0000', '#00FF00', '#0000FF'],
+    displayTime: 3, // Time to display the colors before starting the game
+  },
+  reducers: {
+    setCustomSettings: (state, action) => {
+      return { ...state, ...action.payload };
+    },
+    setWidth: (state, action) => {
+      state.width = action.payload;
+    },
+    setHeight: (state, action) => {
+      state.height = action.payload;
+    },
+    setColors: (state, action) => {
+      state.colors = action.payload;
+    },
+    addColor: (state, action) => {
+      state.colors.push(action.payload);
+    },
+    removeColor: (state, action) => {
+      state.colors = state.colors.filter((color, idx) => idx !== action.payload);
+    },
+    setDisplayTime: (state, action) => {
+      state.displayTime = action.payload;
+    },
+  },
+});
+
 export const { increment } = counterSlice.actions;
-export const { setScore, setTime, setTotalScore, setTotalTime, setDifficulty, incrementScore, incrementTime } = gameSlice.actions;
+export const { setScore, incrementScore, setTime, incrementTime, setDifficulty, setTotalTime, setTotalScore } = gameSlice.actions;
 export const { addEntry, clearLeaderboard } = leaderboardSlice.actions;
+export const { setCustomSettings, setWidth, setHeight, setColors, addColor, removeColor, setDisplayTime } = customSettingsSlice.actions;
 
 const store = configureStore({
   reducer: {
     counter: counterSlice.reducer,
     game: gameSlice.reducer,
     leaderboard: leaderboardSlice.reducer,
+    customSettings: customSettingsSlice.reducer,
   },
 });
 
