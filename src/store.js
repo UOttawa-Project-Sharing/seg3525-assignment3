@@ -14,7 +14,7 @@ const gameSlice = createSlice({
   initialState: {
     score: 0,
     time: 0,
-    difficulty: 'Easy',
+    difficulty: 'easy',
     totalTime: 0,
     totalScore: 0,
   },
