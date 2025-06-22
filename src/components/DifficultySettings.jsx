@@ -44,6 +44,11 @@ const DifficultySettings = ({
     setSelectedDifficulty(DIFFICULTY_STATES[nextIdx].value);
   };
 
+  // Get the settings to display: custom or from the selected difficulty preset
+  const currentSettings = selectedDifficulty === 'custom'
+    ? customSettings
+    : DIFFICULTY_STATES.find(d => d.value === selectedDifficulty)?.settings || {};
+
   return (
     <div className="d-flex flex-column align-items-center gap-4 my-3">
         <div className="w-100 d-flex align-items-center justify-content-between mb-2">
@@ -60,22 +65,22 @@ const DifficultySettings = ({
         <div className="w-100 d-flex align-items-center justify-content-between mb-2">
             <label className="fw-semibold mb-0" style={{ fontSize: '1.1rem' }}>Grid Size:</label>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <input type="number" name="width" min="2" max="20" value={customSettings.width} onChange={handleCustomChange} style={{ width: 55, borderRadius: 4, border: '1px solid #ccc', padding: '2px 6px' }} disabled={selectedDifficulty !== 'custom'} />
+            <input type="number" name="width" min="2" max="20" value={currentSettings.width} onChange={handleCustomChange} style={{ width: 55, borderRadius: 4, border: '1px solid #ccc', padding: '2px 6px' }} disabled={selectedDifficulty !== 'custom'} />
             <span style={{ fontWeight: 600, fontSize: '1.1rem' }}>x</span>
-            <input type="number" name="height" min="2" max="20" value={customSettings.height} onChange={handleCustomChange} style={{ width: 55, borderRadius: 4, border: '1px solid #ccc', padding: '2px 6px' }} disabled={selectedDifficulty !== 'custom'} />
+            <input type="number" name="height" min="2" max="20" value={currentSettings.height} onChange={handleCustomChange} style={{ width: 55, borderRadius: 4, border: '1px solid #ccc', padding: '2px 6px' }} disabled={selectedDifficulty !== 'custom'} />
           </span>
         </div>
         <div className="w-100 d-flex align-items-center justify-content-between mb-2">
           <label className="fw-semibold mb-0" style={{ fontSize: '1.1rem' }}>Display Time:</label>
-          <input type="number" name="displayTime" min="1" max="30" value={customSettings.displayTime} onChange={handleCustomChange} style={{ width: 80, borderRadius: 4, border: '1px solid #ccc', padding: '2px 6px' }} disabled={selectedDifficulty !== 'custom'} />
+          <input type="number" name="displayTime" min="1" max="30" value={currentSettings.displayTime} onChange={handleCustomChange} style={{ width: 80, borderRadius: 4, border: '1px solid #ccc', padding: '2px 6px' }} disabled={selectedDifficulty !== 'custom'} />
         </div>
         <div className="w-100 mb-2">
           <span className="fw-semibold" style={{ fontSize: '1.1rem' }}>Colors to Paint With:</span>
           <div className="d-flex flex-wrap align-items-center mt-2" style={{ gap: 8 }}>
-            {customSettings.colors.map((color, idx) => (
+            {(currentSettings.colors || []).map((color, idx) => (
               <span key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
                 <input type="color" value={color} onChange={e => handleColorChange(idx, e.target.value)} style={{ width: 32, height: 32, border: 'none', background: 'none' }} disabled={selectedDifficulty !== 'custom'} />
-                {customSettings.colors.length > 1 && (
+                {currentSettings.colors.length > 1 && (
                   <button type="button" className="btn btn-sm btn-outline-danger px-2 py-0" style={{ fontSize: 18, lineHeight: 1, marginLeft: 2 }} onClick={() => handleRemoveColorRedux(idx)} disabled={selectedDifficulty !== 'custom'}>&minus;</button>
                 )}
               </span>

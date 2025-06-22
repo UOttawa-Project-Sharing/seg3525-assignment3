@@ -28,10 +28,10 @@ function App() {
 
   // Difficulty button states for cycling, matching Settings page
   const DIFFICULTY_STATES = [
-    { label: "EASY", value: "easy", className: "green" },
-    { label: "MEDIUM", value: "medium", className: "yellow" },
-    { label: "HARD", value: "hard", className: "red" },
-    { label: "EXPERT", value: "expert", className: "red" },
+    { label: "EASY", value: "easy", className: "green", settings: { width: 5, height: 2, colors: ['#c9c9c9'], displayTime: 3 } },
+    { label: "MEDIUM", value: "medium", className: "blue", settings: { width: 5, height: 5, colors: ['#c9c9c9'], displayTime: 4 } },
+    { label: "HARD", value: "hard", className: "red", settings: { width: 6, height: 6, colors: ['#FF0000', '#00FF00', '#0000FF'], displayTime: 5 } },
+    { label: "EXPERT", value: "expert", className: "red", settings: { width: 7, height: 7, colors: ['#FF0000', '#00FF00', '#0000FF'], displayTime: 6 } },
     { label: "CUSTOM", value: "custom", className: "" },
   ];
   const [difficultyIdx, setDifficultyIdx] = useState(0); // default EASY
@@ -120,6 +120,10 @@ function App() {
       {showGame && <GameWindow
         difficulty={selectedDifficulty}
         customSettings={selectedDifficulty === 'custom' ? customSettings : undefined}
+        // Pass DIFFICULTY_STATES and selectedDifficulty for non-custom
+        difficultyStates={DIFFICULTY_STATES}
+        // Pass the settings for the selected difficulty (if not custom)
+        presetSettings={selectedDifficulty !== 'custom' ? (DIFFICULTY_STATES.find(d => d.value === selectedDifficulty)?.settings) : undefined}
         onBackToMain={handleBackToMain}
       />}
         </Card.Body>

@@ -14,39 +14,9 @@ function generateGrid(rows, cols, colors) {
   );
 }
 
-function getGridConfig(difficulty) {
-  const customSettings = useSelector(state => state.customSettings);
-  if (difficulty === 'custom') {
-    // add white to custom colors if not present
-    let colors = customSettings.colors;
-    if (!colors.includes('white')) {
-      colors = [...colors, 'white'];
-    }
-    return {
-      rows: customSettings.height,
-      cols: customSettings.width,
-      colors: colors,
-      colorMode: colors.length > 1,
-      showReferenceTime: customSettings.displayTime || 3
-    };
-  }
-  switch (difficulty) {
-    case 'easy':
-      return { rows: 5, cols: 5, colors: ['gray', 'white'], colorMode: false, showReferenceTime: 3 };
-    case 'medium':
-      return { rows: 10, cols: 10, colors: ['gray', 'white'], colorMode: false, showReferenceTime: 3 };
-    case 'hard':
-      return { rows: 10, cols: 10, colors: ['red', 'blue', 'green', 'yellow'], colorMode: true, showReferenceTime: 3 };
-    case 'expert':
-      return { rows: 10, cols: 20, colors: ['red', 'blue', 'green', 'yellow'], colorMode: true, showReferenceTime: 3 };
-    default:
-      return { rows: 5, cols: 5, colors: ['gray', 'white'], colorMode: false, showReferenceTime: 3 };
-  }
-}
-
-function GameWindow({ difficulty, onBackToMain }) {
+function GameWindow({ difficulty, onBackToMain, customSettings, presetSettings }) {
   const dispatch = useDispatch();
-  const { score, time, totalTime, totalScore } = useSelector(state => state.game);
+  const { time, totalTime, totalScore } = useSelector(state => state.game);
   const [showReference, setShowReference] = useState(true);
   const [timer, setTimer] = useState(0);
   const [running, setRunning] = useState(true); // Add running state
@@ -55,6 +25,38 @@ function GameWindow({ difficulty, onBackToMain }) {
   const [pause, setPause] = useState(false); // Track if pause UI should show
   const [win, setWin] = useState(false); // Track if the user has won
   const [winScore, setWinScore] = useState(0); // Store win accuracy
+
+  // Updated getGridConfig to use presetSettings for non-custom
+  function getGridConfig() {
+    if (difficulty === 'custom') {
+      let colors = customSettings.colors;
+      if (!colors.includes('white')) {
+        colors = [...colors, 'white'];
+      }
+      return {
+        rows: customSettings.height,
+        cols: customSettings.width,
+        colors: colors,
+        colorMode: colors.length > 1,
+        showReferenceTime: customSettings.displayTime || 3
+      };
+    } else if (presetSettings) {
+      // Use settings from DIFFICULTY_STATES
+      let colors = presetSettings.colors;
+      if (!colors.includes('white')) {
+        colors = [...colors, 'white'];
+      }
+      return {
+        rows: presetSettings.height,
+        cols: presetSettings.width,
+        colors: colors,
+        colorMode: colors.length > 1,
+        showReferenceTime: presetSettings.displayTime || 3
+      };
+    }
+    // fallback
+    return { rows: 4, cols: 4, colors: ['#FF0000', '#00FF00', '#0000FF', 'white'], colorMode: true, showReferenceTime: 3 };
+  }
 
   // Get config based on difficulty or custom
   const { rows, cols, colors, colorMode, showReferenceTime } = getGridConfig(difficulty);
