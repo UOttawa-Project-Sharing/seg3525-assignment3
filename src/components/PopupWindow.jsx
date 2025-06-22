@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
 
-export default function PopupWindow({ visible, title, onClose, children }) {
+export default function PopupWindow({ visible, title, onClose, children, footer }) {
     return (
         <Modal show={visible} onHide={onClose} centered>
             <Modal.Header closeButton>
@@ -11,9 +11,11 @@ export default function PopupWindow({ visible, title, onClose, children }) {
                 {children}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
-                    Close
-                </Button>
+                {footer !== undefined ? footer : (
+                    <Button variant="secondary" onClick={onClose}>
+                        Close
+                    </Button>
+                )}
             </Modal.Footer>
         </Modal>
     );
