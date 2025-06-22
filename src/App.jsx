@@ -208,7 +208,7 @@ function App() {
             <hr />
             <div style={{ fontSize: '0.95em', color: '#666' }}>
               <strong>Credits:</strong> <br />
-              Developed by toxo for SEG3525 Assignment 3.<br />
+              Developed by Tristan Robichaud and Zachary Shewan for SEG3525 Assignment 3.<br />
               Powered by React, Redux, and Bootstrap.
             </div>
           </div>
