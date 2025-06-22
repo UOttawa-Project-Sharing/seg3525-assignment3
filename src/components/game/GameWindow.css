@@ -1,0 +1,47 @@
+.game-btn-group {
+  display: flex;
+  flex-direction: row;
+  /*gap: 0.5rem;*/
+}
+
+@media (max-width: 700px) {
+  .game-btn-group {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .game-btn-group .btn {
+    width: 100%;
+    border-radius: 0.5rem !important;
+  }
+}
+
+.grid-container {
+  display: flex;
+  flex-direction: column;
+}
+.grid-row {
+  display: flex;
+}
+.grid-tile {
+  position: relative;
+  background: #fff;
+  border: 1px solid #ccc;
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  cursor: pointer;
+  transition: width 0.2s, height 0.2s;
+}
+
+@media (max-width: 700px) {
+  .grid-tile {
+    width: calc((100vw - 32px) / var(--cols, 4));
+    height: calc((100vw - 32px) / var(--cols, 4));
+    max-width: 80px;
+    max-height: 80px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+}

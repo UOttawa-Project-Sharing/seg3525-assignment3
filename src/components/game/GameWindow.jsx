@@ -6,6 +6,7 @@ import Leaderboard from '../Leaderboard.jsx';
 import PopupWindow from '../PopupWindow.jsx';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import './GameWindow.css';
 
 function generateGrid(rows, cols, colors) {
   return Array.from({ length: rows }, () =>
@@ -201,7 +202,7 @@ function GameWindow({ difficulty, onBackToMain }) {
       )}
       <TitleBar score={Math.round(totalScore)} time={getFormattedTime(timer)} difficulty={difficulty} />
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="grid-container"
+        <div className="grid-container" style={{ '--cols': cols }}
           onMouseLeave={() => setMouseDown(false)}
         >
           {(showReference ? referenceGrid : playerGrid).map((row, rIdx) => (
@@ -246,7 +247,7 @@ function GameWindow({ difficulty, onBackToMain }) {
       </div>
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: 'auto', marginBottom: 8 }}>
         { win ? (
-            <ButtonGroup style={{ zIndex: 20 }}>
+            <ButtonGroup className="game-btn-group" style={{ zIndex: 20 }}>
               <Button variant="success" onClick={handleContinue}>Continue</Button>
               <Button variant="primary" onClick={() => {
                 dispatch(setScore(0));
@@ -259,7 +260,7 @@ function GameWindow({ difficulty, onBackToMain }) {
               <Button variant="secondary" onClick={onBackToMain}>Back to Main Menu</Button>
             </ButtonGroup>
         ) : (
-        <ButtonGroup className="mb-2" style={{ position: 'relative', zIndex: 20, display: win ? 'none' : undefined }}>
+        <ButtonGroup className="mb-2 game-btn-group" style={{ position: 'relative', zIndex: 20, display: win ? 'none' : undefined }}>
           <Button variant={running ? 'warning' : 'success'} onClick={() => { setRunning(r => !r); setPause(p => !p); }}>
             <i className={`bi ${running ? 'bi-pause-fill' : 'bi-play-fill'}`}></i>
           </Button>
