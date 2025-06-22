@@ -4,7 +4,7 @@ import Title from "./components/Title.jsx";
 import { Button, Card } from 'react-bootstrap';
 import PopupWindow from "./components/PopupWindow.jsx";
 import { useSelector, useDispatch } from 'react-redux'
-import {clearLeaderboard, setScore, setTime, setTotalScore, setTotalTime} from './store.js'
+import {clearLeaderboard, setScore, setTime, setTotalScore, setTotalTime, deleteAllData} from './store.js'
 import GameWindow from "./components/game/GameWindow.jsx";
 import Leaderboard from './components/Leaderboard.jsx';
 import GridPageBackground from "./components/GridPageBackground.jsx";
@@ -22,6 +22,7 @@ function App() {
   const [difficultyIdx, setDifficultyIdx] = useState(0);
   const hasOngoingGame = (score > 0 || time > 0 || totalTime > 0 || totalScore > 0) && !showGame;
   const [showDifficultyInline, setShowDifficultyInline] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handlePlay = () => setShowDifficultyInline(true);
   const handleSelectDifficulty = () => {
@@ -39,6 +40,22 @@ function App() {
     dispatch(setTotalTime(0));
     setShowDifficultyInline(true);
   };
+  const handleDeleteData = () => {
+    setShowDeleteConfirm(true);
+  };
+  const confirmDeleteData = () => {
+    dispatch(deleteAllData());
+    setShowGame(false);
+    setShowDifficultyInline(false);
+    setSelectedDifficulty('');
+    setDifficultyIdx(0);
+    setShowInfo(false);
+    setShowLeaderboard(false);
+    setShowDeleteConfirm(false);
+  };
+  const cancelDeleteData = () => {
+    setShowDeleteConfirm(false);
+  };
 
   return (
     <>
@@ -54,6 +71,7 @@ function App() {
           onPlay={handlePlay}
           onInfo={() => setShowInfo(true)}
           onLeaderboard={() => setShowLeaderboard(true)}
+          onDeleteData={handleDeleteData}
         />
       )}
       {!showGame && showDifficultyInline && (
@@ -111,6 +129,21 @@ function App() {
           }
       >
         <Leaderboard />
+      </PopupWindow>
+      <PopupWindow
+        visible={showDeleteConfirm}
+        title="Delete All Data?"
+        onClose={cancelDeleteData}
+        footer={
+          <>
+            <Button variant="danger" onClick={confirmDeleteData}>Delete</Button>
+            <Button variant="secondary" onClick={cancelDeleteData}>Cancel</Button>
+          </>
+        }
+      >
+        <div>
+          Are you sure you want to delete all saved data? This will reset your progress, settings, and leaderboard. This action cannot be undone.
+        </div>
       </PopupWindow>
     </>
   )

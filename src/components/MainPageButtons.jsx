@@ -7,7 +7,8 @@ export default function MainPageButtons({
   onNewGame,
   onPlay,
   onInfo,
-  onLeaderboard
+  onLeaderboard,
+  onDeleteData
 }) {
   return (
     <Container style={{ maxWidth: 220 }} className="d-flex flex-column align-items-center gap-2 my-3">
@@ -21,6 +22,7 @@ export default function MainPageButtons({
       )}
       <Button variant="secondary" size="lg" className="w-100" onClick={onInfo}>Info</Button>
       <Button variant="success" size="lg" className="w-100" onClick={onLeaderboard}>Leaderboard</Button>
+      <Button variant="danger" size="lg" className="w-100" onClick={onDeleteData}>Delete Data</Button>
     </Container>
   );
 }

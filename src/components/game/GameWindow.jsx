@@ -165,15 +165,15 @@ function GameWindow({ difficulty, onBackToMain }) {
           left: 0,
           width: '100%',
           height: '100%',
-          background: 'rgba(0,0,0,0.7)',
-          zIndex: 20,
+          background: 'rgba(0,0,0,0.6)',
+          zIndex: 10,
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           color: 'white',
           fontSize: '2.5rem',
           fontWeight: 'bold',
+          pointerEvents: 'none',
         }}>
           <div>You Win!</div>
           <div style={{ fontSize: '1.5rem', margin: '1rem 0' }}>Score: {Math.round(winScore)}%</div>

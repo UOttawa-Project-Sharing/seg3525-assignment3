@@ -1,4 +1,5 @@
 import { configureStore, createSlice } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux';
 
 const counterSlice = createSlice({
   name: 'counter',
@@ -102,20 +103,70 @@ const presetSettingsSlice = createSlice({
   },
 });
 
+const rootSlice = createSlice({
+  name: 'root',
+  initialState: {},
+  reducers: {
+    deleteAllData: (state, action) => {
+      // This will be handled in the reducer below
+    },
+  },
+});
+
 export const { increment } = counterSlice.actions;
 export const { setScore, incrementScore, setTime, incrementTime, setDifficulty, setTotalTime, setTotalScore } = gameSlice.actions;
 export const { addEntry, clearLeaderboard } = leaderboardSlice.actions;
 export const { setCustomSettings, setWidth, setHeight, setColors, addColor, removeColor, setDisplayTime } = customSettingsSlice.actions;
 export const { setPresetColors, setPresetSetting } = presetSettingsSlice.actions;
+export const { deleteAllData } = rootSlice.actions;
+
+// Load state from localStorage
+function loadState() {
+  try {
+    const serializedState = localStorage.getItem('reduxState');
+    if (serializedState === null) {
+      return undefined;
+    }
+    return JSON.parse(serializedState);
+  } catch (err) {
+    return undefined;
+  }
+}
+
+// Save state to localStorage
+function saveState(state) {
+  try {
+    const serializedState = JSON.stringify(state);
+    localStorage.setItem('reduxState', serializedState);
+  } catch {
+    // ignore write errors
+  }
+}
+
+const appReducer = {
+  counter: counterSlice.reducer,
+  game: gameSlice.reducer,
+  leaderboard: leaderboardSlice.reducer,
+  customSettings: customSettingsSlice.reducer,
+  presetSettings: presetSettingsSlice.reducer,
+  root: rootSlice.reducer,
+};
+
+const rootReducer = (state, action) => {
+  if (action.type === deleteAllData.type) {
+    localStorage.removeItem('reduxState');
+    state = undefined;
+  }
+  return combineReducers(appReducer)(state, action);
+};
 
 const store = configureStore({
-  reducer: {
-    counter: counterSlice.reducer,
-    game: gameSlice.reducer,
-    leaderboard: leaderboardSlice.reducer,
-    customSettings: customSettingsSlice.reducer,
-    presetSettings: presetSettingsSlice.reducer,
-  },
+  reducer: rootReducer,
+  preloadedState: loadState(),
+});
+
+store.subscribe(() => {
+  saveState(store.getState());
 });
 
 export function getFormattedTime(seconds) {
