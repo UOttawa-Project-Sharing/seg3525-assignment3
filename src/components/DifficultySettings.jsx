@@ -79,9 +79,9 @@ const DifficultySettings = ({
         <div className="w-100 d-flex align-items-center justify-content-between mb-2">
             <label className="fw-semibold mb-0" style={{ fontSize: '1.1rem' }}>Grid Size:</label>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-            <input type="number" name="width" min="2" max="20" value={currentSettings.width} onChange={handleCustomChange} style={{ width: 55, borderRadius: 4, border: '1px solid #ccc', padding: '2px 6px' }} disabled={difficulty !== 'custom'} />
+            <input type="number" name="width" min="2" max="7" value={currentSettings.width} onChange={handleCustomChange} style={{ width: 55, borderRadius: 4, border: '1px solid #ccc', padding: '2px 6px' }} disabled={difficulty !== 'custom'} />
             <span style={{ fontWeight: 600, fontSize: '1.1rem' }}>x</span>
-            <input type="number" name="height" min="2" max="20" value={currentSettings.height} onChange={handleCustomChange} style={{ width: 55, borderRadius: 4, border: '1px solid #ccc', padding: '2px 6px' }} disabled={difficulty !== 'custom'} />
+            <input type="number" name="height" min="2" max="7" value={currentSettings.height} onChange={handleCustomChange} style={{ width: 55, borderRadius: 4, border: '1px solid #ccc', padding: '2px 6px' }} disabled={difficulty !== 'custom'} />
           </span>
         </div>
         <div className="w-100 d-flex align-items-center justify-content-between mb-2">

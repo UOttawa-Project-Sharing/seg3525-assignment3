@@ -169,6 +169,7 @@ function GameWindow({ difficulty, onBackToMain }) {
           background: 'rgba(0,0,0,0.6)',
           zIndex: 10,
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           color: 'white',
@@ -206,14 +207,14 @@ function GameWindow({ difficulty, onBackToMain }) {
           onMouseLeave={() => setMouseDown(false)}
         >
           {(showReference ? referenceGrid : playerGrid).map((row, rIdx) => (
-            <div className="grid-row" key={rIdx} style={{  height: 60 }}>
+            <div className="grid-row" key={rIdx} style={{ }}>
               {row.map((color, cIdx) => {
                 const isIncorrect = win && playerGrid[rIdx][cIdx] !== referenceGrid[rIdx][cIdx];
                 return (
                   <div
                     key={cIdx}
                     className="grid-tile"
-                    style={{ position: 'relative', background: color, border: '1px solid #ccc', width: 60, height: 60, display: 'inline-block', cursor: showReference ? 'default' : 'pointer' }}
+                    style={{ position: 'relative', background: color, border: '1px solid #ccc', display: 'inline-block', cursor: showReference ? 'default' : 'pointer' }}
                     onMouseDown={e => { e.preventDefault(); setMouseDown(true); handleTileAction(rIdx, cIdx); }}
                     onMouseUp={() => setMouseDown(false)}
                     onMouseEnter={() => { if (mouseDown) handleTileAction(rIdx, cIdx); }}
