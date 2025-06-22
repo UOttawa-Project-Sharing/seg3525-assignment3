@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import {setWidth, setHeight, setColors, addColor, removeColor, setDisplayTime} from '../store';
 
@@ -35,7 +35,9 @@ const DifficultySettings = ({
   };
 
   const handleAddColorRedux = () => {
-    dispatch(addColor('#000000'));
+    if ((customSettings.colors || []).length < 10) {
+      dispatch(addColor('#000000'));
+    }
   };
 
   const handleCycleDifficulty = () => {
@@ -79,13 +81,13 @@ const DifficultySettings = ({
           <div className="d-flex flex-wrap align-items-center mt-2" style={{ gap: 8 }}>
             {(currentSettings.colors || []).map((color, idx) => (
               <span key={idx} style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
-                <input type="color" value={color} onChange={e => handleColorChange(idx, e.target.value)} style={{ width: 32, height: 32, border: 'none', background: 'none' }} disabled={selectedDifficulty !== 'custom'} />
+                <Form.Control type="color" value={color} onChange={e => handleColorChange(idx, e.target.value)} style={{ width: 32, height: 32, border: 'none', background: 'none', padding: 0 }} disabled={selectedDifficulty !== 'custom'} />
                 {currentSettings.colors.length > 1 && (
-                  <button type="button" className="btn btn-sm btn-outline-danger px-2 py-0" style={{ fontSize: 18, lineHeight: 1, marginLeft: 2 }} onClick={() => handleRemoveColorRedux(idx)} disabled={selectedDifficulty !== 'custom'}>&minus;</button>
+                  <Button type="button" variant="outline-danger" size="sm" className="px-2 py-0" style={{ fontSize: 18, lineHeight: 1, marginLeft: 2 }} onClick={() => handleRemoveColorRedux(idx)} disabled={selectedDifficulty !== 'custom'}>&minus;</Button>
                 )}
               </span>
             ))}
-            <button type="button" className="btn btn-sm btn-outline-success px-2 py-0" style={{ fontSize: 18, lineHeight: 1 }} onClick={handleAddColorRedux} disabled={selectedDifficulty !== 'custom'}>+</button>
+            <Button type="button" variant="outline-success" size="sm" className="px-2 py-0" style={{ fontSize: 18, lineHeight: 1 }} onClick={handleAddColorRedux} disabled={selectedDifficulty !== 'custom' || (currentSettings.colors && currentSettings.colors.length >= 10)}>+</Button>
           </div>
         </div>
         <div className="d-flex gap-3 mt-3 w-100 justify-content-end">
