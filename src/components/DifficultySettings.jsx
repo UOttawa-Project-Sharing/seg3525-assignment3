@@ -50,7 +50,7 @@ const DifficultySettings = ({
     : DIFFICULTY_STATES.find(d => d.value === selectedDifficulty)?.settings || {};
 
   return (
-    <div className="d-flex flex-column align-items-center gap-4 my-3">
+    <div className="d-flex flex-column align-items-center gap-4 my-3" style={{ minWidth: '50%' }}>
         <div className="w-100 d-flex align-items-center justify-content-between mb-2">
             <label className="fw-semibold mb-0" style={{ fontSize: '1.1rem' }}>Difficulty:</label>
             <button

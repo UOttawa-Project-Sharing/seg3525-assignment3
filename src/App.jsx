@@ -88,10 +88,10 @@ function App() {
   return (
     <>
       <GridPageBackground/>
-      <Card style={{ background: '#23272b', color: 'white', margin: '32px auto 0', boxShadow: '0 2px 16px #0008' }}>
-        <Card.Body className="d-flex flex-column align-items-center p-4">
+      <Card style={{ background: '#23272b', color: 'white', boxShadow: '0 2px 16px #0008', minWidth: '50vw' }}>
+        <Card.Body className="d-flex flex-column align-items-center">
           <Title size="large">Tile Matcher</Title>
-        {/*<Title size="large">Tile Matcher</Title>*/}
+          {/*<Title size="large">Tile Matcher</Title>*/}
 
       {/* Only show MainPageButtons if not showing difficulty or custom forms and not in game */}
       {!showGame && !showDifficultyInline && !showCustomForm && (

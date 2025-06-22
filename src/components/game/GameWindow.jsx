@@ -188,7 +188,7 @@ function GameWindow({ difficulty, onBackToMain, customSettings, presetSettings }
   }
 
   return (
-    <div className="game-window" style={{ position: 'relative' }}>
+    <div className="game-window" style={{ position: 'relative', width: '100%' }}>
       {/* Overlay for pause or win */}
       {win && (
         <div style={{
