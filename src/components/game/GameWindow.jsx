@@ -140,8 +140,8 @@ function GameWindow({ difficulty, onBackToMain, customSettings, presetSettings }
         if (playerGrid[r][c] === referenceGrid[r][c]) correct++;
       }
     }
-    const accuracy = (correct / total) * 100;
-    const entryScore = totalScore + accuracy;
+    const accuracy = Math.round((correct / total) * 100);
+    const entryScore = Math.round(totalScore + accuracy);
     const newTotalTime = totalTime + timer;
     dispatch(setScore(accuracy));
     dispatch(setTotalTime(newTotalTime));
@@ -189,7 +189,7 @@ function GameWindow({ difficulty, onBackToMain, customSettings, presetSettings }
           fontWeight: 'bold',
         }}>
           <div>You Win!</div>
-          <div style={{ fontSize: '1.5rem', margin: '1rem 0' }}>Score: {winScore.toFixed(2)}%</div>
+          <div style={{ fontSize: '1.5rem', margin: '1rem 0' }}>Score: {Math.round(winScore)}%</div>
         </div>
       )}
       {pause && !running && !win && (
@@ -212,7 +212,7 @@ function GameWindow({ difficulty, onBackToMain, customSettings, presetSettings }
           Game Paused
         </div>
       )}
-      <TitleBar score={totalScore} time={getFormattedTime(timer)} difficulty={difficulty} />
+      <TitleBar score={Math.round(totalScore)} time={getFormattedTime(timer)} difficulty={difficulty} />
       <div className="grid-container"
         onMouseLeave={() => setMouseDown(false)}
       >
